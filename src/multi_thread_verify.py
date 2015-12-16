@@ -33,15 +33,17 @@ proxys = [
 
 success_result = []
 
+# user_proxy = True
+user_proxy = False
+
 class GetUrlThread(Thread):
     def __init__(self, word):
         self.code = word
         super(GetUrlThread, self).__init__()
 
-    def run(self):
+    def build_request_req(self):
         proxy_index = random.randint(0, len(proxys) - 1)
         ip = proxys[proxy_index]
-
         value = {'reginvcode': self.code, "action": 'reginvcodeck'}
         value_encoded = urllib.urlencode(value)
         url = 'http://clsq.co/register.php'
@@ -51,27 +53,33 @@ class GetUrlThread(Thread):
             'User-Agent': user_agent_,
             # "X-Forwarded-for": ip
         }
-
         print(ip + " " + user_agent_ + "  -->")
 
-        proxy = urllib2.ProxyHandler({'http': ip})
-        opener = urllib2.build_opener(proxy)
-        urllib2.install_opener(opener)
+        if user_proxy:
+            proxy = urllib2.ProxyHandler({'http': ip})
+            opener = urllib2.build_opener(proxy)
+            urllib2.install_opener(opener)
 
         req = urllib2.Request(url, data=value_encoded, headers=headers)
-        resp = urllib2.urlopen(req, timeout=10)
+        return req, url
 
-        # retry
-        if resp.getcode() != 200:
-            time.sleep(1)
-            resp = urllib2.Request(url, data=value_encoded, headers=headers)
-        if resp.getcode() != 200:
-            time.sleep(1)
-            resp = urllib2.Request(url, data=value_encoded, headers=headers)
-        if resp.getcode() != 200:
-            time.sleep(1)
-            resp = urllib2.Request(url, data=value_encoded, headers=headers)
+    def run(self):
+        req, url = self.build_request_req()
+        max_retry_num = 6
+        for i in range(max_retry_num):
+            try:
+                resp = urllib2.urlopen(req, timeout=5).read()
+                self.transact_success_result(resp, url)
+                break
+            except:
+                if i < max_retry_num - 1:
+                    print 'URLError: retry...'
+                    time.sleep(2)
+                    continue
+                else:
+                    print 'URLError: <urlopen error timed out> All times is failed '
 
+    def transact_success_result(self, resp, url):
         resp_read = resp.read()
         print("     response: " + resp_read)
         if len(str(resp_read).strip()) > 0:
@@ -80,7 +88,6 @@ class GetUrlThread(Thread):
             success = False
         if success:
             success_result.append(self.code)
-
         print url, success, self.code
 
 
