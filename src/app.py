@@ -3,6 +3,7 @@ from src import multi_thread_verify
 
 __author__ = 'xxp'
 
+# code = "146c7f0bae8ac4c6"
 code = "a6*b8f4c981*577a"
 
 def main():

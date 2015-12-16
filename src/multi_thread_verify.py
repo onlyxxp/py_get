@@ -38,7 +38,11 @@ class GetUrlThread(Thread):
             resp = urllib2.Request(url, data=value_encoded, headers=headers)
 
         resp_read = resp.read()
-        success = str(resp_read).index("parent.retmsg_invcode('1');") < 0
+        print("response:" + resp_read)
+        if len(str(resp_read).strip()) > 0:
+            success = str(resp_read).find("parent.retmsg_invcode('1');") < 0
+        else:
+            success = False
         if success:
             success_result.append(self.code)
 
@@ -52,7 +56,9 @@ def get_responses(code_list):
         t = GetUrlThread(code)
         threads.append(t)
         t.start()
+        time.sleep(1)
     for t in threads:
         t.join()
     print "Elapsed time: %s" % (time.time() - start)
+    print "^_^ : "
     print success_result
