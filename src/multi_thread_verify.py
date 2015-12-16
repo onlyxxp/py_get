@@ -23,18 +23,25 @@ class GetUrlThread(Thread):
         headers = {'User-Agent': user_agent}
 
         req = urllib2.Request(url, data=value_encoded, headers=headers)
+
         resp = urllib2.urlopen(req, timeout=10)
+
+        # retry
         if resp.getcode() != 200:
+            time.sleep(1)
             resp = urllib2.Request(url, data=value_encoded, headers=headers)
         if resp.getcode() != 200:
+            time.sleep(1)
             resp = urllib2.Request(url, data=value_encoded, headers=headers)
         if resp.getcode() != 200:
+            time.sleep(1)
             resp = urllib2.Request(url, data=value_encoded, headers=headers)
 
         resp_read = resp.read()
         success = str(resp_read).index("parent.retmsg_invcode('1');") < 0
         if success:
             success_result.append(self.code)
+
         print url, success, self.code
 
 
