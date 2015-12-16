@@ -1,5 +1,5 @@
 from src import guess
-from src import multi_thread
+from src import multi_thread_verify
 
 __author__ = 'xxp'
 
@@ -10,6 +10,6 @@ def main():
 
     print(len(result_list))
     # result_list = ["a6*b8f4c981*577a"]
-    multi_thread.get_responses(result_list)
+    multi_thread_verify.get_responses(result_list)
 
 main()
