@@ -19,22 +19,16 @@ user_agents = [
 ]
 
 proxys = [
-    "124.206.133.227:80",
-    "118.244.151.157:3128",
-    # "114.41.143.186:3128",
-    # "221.228.248.244:8085",
-    # "101.81.67.13:9797",
-    # "116.1.233.53:8080",
-    # "58.67.159.50:80",
-    # "183.5.199.62:9797",
+    # "124.206.133.227:80",
+    # "118.244.151.157:3128",
     # "183.135.152.61:9999",
     # "218.75.26.44:808"
 ]
 
 success_result = []
 
-# user_proxy = True
-user_proxy = False
+user_proxy = True
+# user_proxy = False
 
 class GetUrlThread(Thread):
     def __init__(self, word):
@@ -47,6 +41,7 @@ class GetUrlThread(Thread):
         value = {'reginvcode': self.code, "action": 'reginvcodeck'}
         value_encoded = urllib.urlencode(value)
         url = 'http://clsq.co/register.php'
+        # url = 'http://wap.baidu.com'
         # user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
         user_agent_ = user_agents[random.randint(0, len(user_agents) - 1)]
         headers = {
@@ -80,7 +75,7 @@ class GetUrlThread(Thread):
                     print 'URLError: <urlopen error timed out> All times is failed '
 
     def transact_success_result(self, resp, url):
-        resp_read = resp.read()
+        resp_read = str(resp)
         print("     response: " + resp_read)
         if len(str(resp_read).strip()) > 0:
             success = str(resp_read).find("parent.retmsg_invcode('1');") < 0
@@ -101,7 +96,7 @@ def get_responses(code_list):
         t = GetUrlThread(code)
         threads.append(t)
         t.start()
-        time.sleep(1)
+        time.sleep(2)
         i += 1
     for t in threads:
         t.join()
