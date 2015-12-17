@@ -1,5 +1,5 @@
-from src import code_guess
-from src import code_verify
+from src import _code_guess
+from src import _code_verify
 
 __author__ = 'xxp'
 
@@ -7,10 +7,10 @@ __author__ = 'xxp'
 code = "a6*b8f4c981*577a"
 
 def main():
-    result_list = code_guess.guess_full_codes(code)
+    result_list = _code_guess.guess_full_codes(code)
 
     print(len(result_list))
     # result_list = ["a6*b8f4c981*577a"]
-    code_verify.get_responses(result_list)
+    _code_verify.get_responses(result_list)
 
 main()
