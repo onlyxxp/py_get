@@ -40,8 +40,7 @@ class GetUrlThread(Thread):
 
     def build_request(self):
         ip_with_port = str(self.ip_with_port)
-        # url = str(self.url)
-        url = 'http://www.baidu.com'
+        url = str(self.url)
 
         value_encoded = urllib.urlencode(
             {
@@ -62,13 +61,10 @@ class GetUrlThread(Thread):
             urllib2.install_opener(opener)
 
         print self.index, "==>", ip_with_port,  " ", self.url
-        print "xxxx -11"
         req = urllib2.Request(url, data=value_encoded, headers=headers)
-        print "xxxx 000"
         return req, url
 
     def transact_success_result(self, resp, url):
-        print "xxxx 222"
         global success, success_result
         resp_read = str(resp)
         if len(str(resp_read).strip()) > 0:
@@ -83,7 +79,6 @@ class GetUrlThread(Thread):
     def run(self):
         global max_retry_num
         req, url = self.build_request()
-        print "xxxx 111"
         for i in range(max_retry_num):
             try:
                 resp = urllib2.urlopen(req, timeout=5).read()
@@ -110,7 +105,6 @@ def get_responses(code_list):
         t.start()
         index += 1
         time.sleep(1)
-        break
         if success:
             print 'skip because success'
             break

@@ -10,6 +10,7 @@ def main():
     result_list = _code_guess.guess_full_codes(code)
 
     print(len(result_list))
+
     # result_list = ["a6*b8f4c981*577a"]
     _code_verify.get_responses(result_list)
 
