@@ -23,10 +23,11 @@ user_agents = [
     "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.1)",
 ]
 
-max_retry_num = 10
+max_retry_num = 6
 
 success_result = []
 bad_ip = []
+http_failed_codes = []
 
 success = False
 
@@ -73,12 +74,12 @@ class GetUrlThread(Thread):
             print self.index, "<==", url, success, self.code, "   response: " + resp_read
         else:
             success = False
-            print self.index, "<==", url, success, self.code, "   response is EMPTY "
+            print self.index, "<==", url, success, self.code, "   response is EMPTY ", self.ip_with_port
         if success:
             success_result.append(self.code)
 
     def run(self):
-        global max_retry_num
+        global max_retry_num, http_failed_codes
         req, url = self.build_request()
         for i in range(max_retry_num):
             try:
@@ -88,15 +89,16 @@ class GetUrlThread(Thread):
             except:
                 if i < max_retry_num - 1:
                     print 'URLError: retry later ...', self.ip_with_port
-                    time.sleep(3)
+                    time.sleep(2)
                     continue
                 else:
                     bad_ip.append(self.ip_with_port)
+                    http_failed_codes.append(self.code)
                     print 'URLError: <urlopen error timed out> All times is failed ', self.ip_with_port
 
 
 def get_responses(code_list, url):
-    global success, success_result
+    global success, success_result, http_failed_codes
     start = time.time()
     threads = []
 
@@ -114,7 +116,13 @@ def get_responses(code_list, url):
     for t in threads:
         t.join()
 
+    print "================================================"
     print "bad ip is ", bad_ip
     print "Elapsed time: %s" % (time.time() - start)
     print "^_^ : "
     print "code is ", success_result
+    print "================================================"
+
+    if len(http_failed_codes) > 0:
+        time.sleep(2)
+        get_responses(http_failed_codes, url)
