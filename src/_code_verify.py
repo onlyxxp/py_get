@@ -5,6 +5,7 @@ import urllib
 import urllib2
 import time
 from src import _url_
+from src import _ip_
 from threading import Thread
 
 user_agents = [
@@ -22,50 +23,53 @@ user_agents = [
     "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.1)",
 ]
 
-proxys = [
-    "54.86.216.36:3128",
-    # "118.244.151.157:3128",
-    # "183.135.152.61:9999",
-    # "218.75.26.44:808"
-]
-
 max_retry_num = 6
 
 success_result = []
 
-# user_proxy = True
-user_proxy = False
-
 success = False
 
+
 class GetUrlThread(Thread):
-    def __init__(self, word, index, url):
+    def __init__(self, word, index, url, ip_with_port):
         self.code = word
         self.index = index
         self.url = url
+        self.ip_with_port = ip_with_port
         super(GetUrlThread, self).__init__()
 
     def build_request(self):
-        proxy_index = random.randint(0, len(proxys) - 1)
-        ip = proxys[proxy_index]
-        value = {'reginvcode': self.code, "action": 'reginvcodeck'}
-        value_encoded = urllib.urlencode(value)
+        ip_with_port = str(self.ip_with_port)
+        # url = str(self.url)
+        url = 'http://www.baidu.com'
+
+        value_encoded = urllib.urlencode(
+            {
+                'reginvcode': self.code,
+                "action": 'reginvcodeck'
+            }
+        )
+        global user_agents
         user_agent_ = user_agents[random.randint(0, len(user_agents) - 1)]
         headers = {
-            'User-Agent': user_agent_,
-            "X-Forwarded-for": ip.split(":")[0]
+            'User-Agent': user_agent_
         }
-        print self.index, "==>", ip,  " ", self.url
 
-        if user_proxy:
-            proxy = urllib2.ProxyHandler({'http': ip})
+        if ip_with_port.strip() != '':
+            headers["X-Forwarded-for"] = ip_with_port.split(":")[0]
+            proxy = urllib2.ProxyHandler({'http': ip_with_port})
             opener = urllib2.build_opener(proxy)
             urllib2.install_opener(opener)
 
-        req = urllib2.Request(self.url, data=value_encoded, headers=headers)
-        return req, self.url
+        print self.index, "==>", ip_with_port,  " ", self.url
+        print "xxxx -11"
+        req = urllib2.Request(url, data=value_encoded, headers=headers)
+        print "xxxx 000"
+        return req, url
 
     def transact_success_result(self, resp, url):
+        print "xxxx 222"
+        global success, success_result
         resp_read = str(resp)
         if len(str(resp_read).strip()) > 0:
             success = str(resp_read).find("parent.retmsg_invcode('1');") < 0
@@ -77,7 +81,9 @@ class GetUrlThread(Thread):
             success_result.append(self.code)
 
     def run(self):
+        global max_retry_num
         req, url = self.build_request()
+        print "xxxx 111"
         for i in range(max_retry_num):
             try:
                 resp = urllib2.urlopen(req, timeout=5).read()
@@ -93,18 +99,18 @@ class GetUrlThread(Thread):
 
 
 def get_responses(code_list):
+    global success, success_result
     start = time.time()
     threads = []
-    index = 1
 
+    index = 1
     for code in list(code_list):
-        t = GetUrlThread(code, index, _url_.get_url())
+        t = GetUrlThread(code, index, _url_.get_url(), _ip_.get_ip_with_port())
         threads.append(t)
         t.start()
         index += 1
-
         time.sleep(1)
-
+        break
         if success:
             print 'skip because success'
             break

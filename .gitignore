@@ -1,3 +1,4 @@
+src/*.pyc
 .gradle
 /local.properties
 /.idea/workspace.xml
