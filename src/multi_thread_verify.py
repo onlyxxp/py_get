@@ -19,7 +19,7 @@ user_agents = [
 ]
 
 proxys = [
-    # "124.206.133.227:80",
+    "54.86.216.36:3128",
     # "118.244.151.157:3128",
     # "183.135.152.61:9999",
     # "218.75.26.44:808"
@@ -27,8 +27,10 @@ proxys = [
 
 success_result = []
 
-user_proxy = True
-# user_proxy = False
+# user_proxy = True
+user_proxy = False
+
+success = False
 
 class GetUrlThread(Thread):
     def __init__(self, word):
@@ -42,11 +44,10 @@ class GetUrlThread(Thread):
         value_encoded = urllib.urlencode(value)
         url = 'http://clsq.co/register.php'
         # url = 'http://wap.baidu.com'
-        # user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
         user_agent_ = user_agents[random.randint(0, len(user_agents) - 1)]
         headers = {
             'User-Agent': user_agent_,
-            # "X-Forwarded-for": ip
+            "X-Forwarded-for": ip.split(":")[0]
         }
         print(ip + " " + user_agent_ + "  -->")
 
@@ -59,6 +60,10 @@ class GetUrlThread(Thread):
         return req, url
 
     def run(self):
+        if success:
+            print 'skip because success'
+            return
+
         req, url = self.build_request_req()
         max_retry_num = 6
         for i in range(max_retry_num):
@@ -68,7 +73,7 @@ class GetUrlThread(Thread):
                 break
             except:
                 if i < max_retry_num - 1:
-                    print 'URLError: retry...'
+                    print 'URLError: retry later ...'
                     time.sleep(2)
                     continue
                 else:
@@ -96,7 +101,7 @@ def get_responses(code_list):
         t = GetUrlThread(code)
         threads.append(t)
         t.start()
-        time.sleep(2)
+        time.sleep(1)
         i += 1
     for t in threads:
         t.join()
