@@ -81,9 +81,9 @@ class GetUrlThread(Thread):
 
     def append_to_bad_ip(self, ip_with_port):
         global bad_ip
+        _ip_.remove_bad_ip(ip_with_port)
         if ip_with_port not in bad_ip:
             bad_ip.append(ip_with_port)
-            _ip_.remove_bad_ip(ip_with_port)
 
     def run(self):
         global max_retry_num, http_failed_codes, bad_ip, success_result
