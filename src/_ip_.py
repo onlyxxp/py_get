@@ -24,4 +24,4 @@ def get_ip_with_port():
 
 def get_speed():
     global proxy_list
-    return 1/float(len(proxy_list))
+    return 2/float(len(proxy_list))

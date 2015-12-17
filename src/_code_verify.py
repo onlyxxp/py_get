@@ -67,19 +67,20 @@ class GetUrlThread(Thread):
         return req, url
 
     def transact_success_result(self, resp, url):
-        global success, success_result
+        global success, success_result, bad_ip
         resp_read = str(resp)
         if len(str(resp_read).strip()) > 0:
             success = str(resp_read).find("parent.retmsg_invcode('1');") < 0
             print self.index, "<==", url, success, self.code, "   response: " + resp_read
         else:
             success = False
+            bad_ip.append(self.ip_with_port)
             print self.index, "<==", url, success, self.code, "   response is EMPTY ", self.ip_with_port
         if success:
             success_result.append(self.code)
 
     def run(self):
-        global max_retry_num, http_failed_codes
+        global max_retry_num, http_failed_codes, bad_ip, success_result
         req, url = self.build_request()
         for i in range(max_retry_num):
             try:
@@ -98,7 +99,7 @@ class GetUrlThread(Thread):
 
 
 def get_responses(code_list, url):
-    global success, success_result, http_failed_codes
+    global success, success_result, http_failed_codes, bad_ip
     start = time.time()
     threads = []
 
