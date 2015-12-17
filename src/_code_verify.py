@@ -1,4 +1,5 @@
 # !/usr/bin/env python
+import threading
 
 __author__ = 'xxp'
 import random
@@ -31,6 +32,10 @@ http_failed_codes = []
 
 success = False
 
+mutex = threading.Lock()
+current_thread_count = 0
+max_thread_count = _ip_.get_ip_size()
+
 
 class GetUrlThread(Thread):
     def __init__(self, word, index, url, ip_with_port):
@@ -39,6 +44,20 @@ class GetUrlThread(Thread):
         self.url = url
         self.ip_with_port = ip_with_port
         super(GetUrlThread, self).__init__()
+
+    @staticmethod
+    def thread_count_increase():
+        global current_thread_count
+        mutex.acquire(100)
+        current_thread_count += 1
+        mutex.release()
+
+    @staticmethod
+    def thread_count_decrease():
+        global current_thread_count
+        mutex.acquire(100)
+        current_thread_count -= 1
+        mutex.release()
 
     def build_request(self):
         ip_with_port = str(self.ip_with_port)
@@ -86,6 +105,7 @@ class GetUrlThread(Thread):
             bad_ip.append(ip_with_port)
 
     def run(self):
+        self.thread_count_increase()
         global max_retry_num, http_failed_codes, bad_ip, success_result
         req, url = self.build_request()
         for i in range(max_retry_num):
@@ -102,10 +122,11 @@ class GetUrlThread(Thread):
                     self.append_to_bad_ip(self.ip_with_port)
                     http_failed_codes.append(self.code)
                     print 'URLError: <urlopen error timed out> All times is failed ', self.ip_with_port
+        self.thread_count_decrease()
 
 
 def get_responses(code_list, url):
-    global success, success_result, http_failed_codes, bad_ip
+    global success, success_result, http_failed_codes, bad_ip, current_thread_count, max_thread_count
     start = time.time()
     threads = []
 
@@ -115,10 +136,11 @@ def get_responses(code_list, url):
         threads.append(t)
         t.start()
         index += 1
-        time.sleep(_ip_.get_speed())
         if success:
             print 'skip because success'
             break
+        while current_thread_count >= max_thread_count:
+            time.sleep(_ip_.get_speed())
 
     for t in threads:
         t.join()
