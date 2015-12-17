@@ -39,8 +39,9 @@ user_proxy = False
 success = False
 
 class GetUrlThread(Thread):
-    def __init__(self, word):
+    def __init__(self, word, index):
         self.code = word
+        self.index = index
         super(GetUrlThread, self).__init__()
 
     def build_request_req(self):
@@ -55,7 +56,7 @@ class GetUrlThread(Thread):
             'User-Agent': user_agent_,
             "X-Forwarded-for": ip.split(":")[0]
         }
-        # print(ip + "  -->")
+        print self.index, "==>", ip,  " ", url
 
         if user_proxy:
             proxy = urllib2.ProxyHandler({'http': ip})
@@ -85,10 +86,10 @@ class GetUrlThread(Thread):
         resp_read = str(resp)
         if len(str(resp_read).strip()) > 0:
             success = str(resp_read).find("parent.retmsg_invcode('1');") < 0
-            print url, success, self.code, "   response: " + resp_read
+            print self.index, "<==", url, success, self.code, "   response: " + resp_read
         else:
             success = False
-            print url, success, self.code, "   response is EMPTY "
+            print self.index, "<==", url, success, self.code, "   response is EMPTY "
         if success:
             success_result.append(self.code)
 
@@ -100,7 +101,7 @@ def get_responses(code_list):
     default_ip = "21.23.44."
 
     for code in list(code_list):
-        t = GetUrlThread(code)
+        t = GetUrlThread(code, i)
         threads.append(t)
         t.start()
         time.sleep(1)
