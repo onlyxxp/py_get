@@ -12,3 +12,10 @@ def get_url():
     return url
 
 # get_url()
+
+
+def test():
+    ips = [1, 2, 3, 4]
+    print "2" in ips
+
+test()

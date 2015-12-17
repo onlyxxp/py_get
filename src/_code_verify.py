@@ -74,10 +74,15 @@ class GetUrlThread(Thread):
             print self.index, "<==", url, success, self.code, "   response: " + resp_read
         else:
             success = False
-            bad_ip.append(self.ip_with_port)
+            self.append_to_bad_ip(self.ip_with_port)
             print self.index, "<==", url, success, self.code, "   response is EMPTY ", self.ip_with_port
         if success:
             success_result.append(self.code)
+
+    def append_to_bad_ip(self, ip_with_port):
+        global bad_ip
+        if ip_with_port not in bad_ip:
+            bad_ip.append(ip_with_port)
 
     def run(self):
         global max_retry_num, http_failed_codes, bad_ip, success_result
@@ -93,7 +98,7 @@ class GetUrlThread(Thread):
                     time.sleep(2)
                     continue
                 else:
-                    bad_ip.append(self.ip_with_port)
+                    self.append_to_bad_ip(self.ip_with_port)
                     http_failed_codes.append(self.code)
                     print 'URLError: <urlopen error timed out> All times is failed ', self.ip_with_port
 
@@ -119,6 +124,7 @@ def get_responses(code_list, url):
 
     print "================================================"
     print "bad ip is ", bad_ip
+    print "http error code size ", len(http_failed_codes)
     print "Elapsed time: %s" % (time.time() - start)
     print "^_^ : "
     print "code is ", success_result
