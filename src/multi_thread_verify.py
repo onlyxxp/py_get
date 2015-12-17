@@ -49,7 +49,7 @@ class GetUrlThread(Thread):
             'User-Agent': user_agent_,
             "X-Forwarded-for": ip.split(":")[0]
         }
-        print(ip + " " + user_agent_ + "  -->")
+        # print(ip + "  -->")
 
         if user_proxy:
             proxy = urllib2.ProxyHandler({'http': ip})
@@ -60,10 +60,6 @@ class GetUrlThread(Thread):
         return req, url
 
     def run(self):
-        if success:
-            print 'skip because success'
-            return
-
         req, url = self.build_request_req()
         max_retry_num = 6
         for i in range(max_retry_num):
@@ -74,21 +70,20 @@ class GetUrlThread(Thread):
             except:
                 if i < max_retry_num - 1:
                     print 'URLError: retry later ...'
-                    time.sleep(2)
+                    time.sleep(5)
                     continue
                 else:
                     print 'URLError: <urlopen error timed out> All times is failed '
 
     def transact_success_result(self, resp, url):
         resp_read = str(resp)
-        print("     response: " + resp_read)
         if len(str(resp_read).strip()) > 0:
             success = str(resp_read).find("parent.retmsg_invcode('1');") < 0
         else:
             success = False
         if success:
             success_result.append(self.code)
-        print url, success, self.code
+        print url, success, self.code, "   response: " + resp_read
 
 
 def get_responses(code_list):
@@ -103,6 +98,10 @@ def get_responses(code_list):
         t.start()
         time.sleep(1)
         i += 1
+        if success:
+            print 'skip because success'
+            break
+
     for t in threads:
         t.join()
     print "Elapsed time: %s" % (time.time() - start)
