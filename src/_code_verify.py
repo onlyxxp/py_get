@@ -1,9 +1,11 @@
 # !/usr/bin/env python
+
 __author__ = 'xxp'
 import random
 import urllib
 import urllib2
 import time
+from src import _ip_
 from threading import Thread
 
 user_agents = [
@@ -91,14 +93,14 @@ class GetUrlThread(Thread):
                     print 'URLError: <urlopen error timed out> All times is failed '
 
 
-def get_responses(code_list, url, ip_with_port):
+def get_responses(code_list, url):
     global success, success_result
     start = time.time()
     threads = []
 
     index = 1
     for code in list(code_list):
-        t = GetUrlThread(code, index, url, ip_with_port)
+        t = GetUrlThread(code, index, url, _ip_.get_ip_with_port())
         threads.append(t)
         t.start()
         index += 1

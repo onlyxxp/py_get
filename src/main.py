@@ -14,6 +14,6 @@ def main():
     print(len(result_list))
 
     # result_list = ["a6*b8f4c981*577a"]
-    _code_verify.get_responses(result_list, _url_.get_url(), _ip_.get_ip_with_port())
+    _code_verify.get_responses(result_list, _url_.get_url())
 
 main()
