@@ -20,11 +20,13 @@ def get_ip_with_port():
     global proxy_list
 
     if len(proxy_list) <= 0:
+        print "All ip is bad !!!!!!!!!!!!!!"
         return ''
 
     proxy_index = random.randint(0, len(proxy_list) - 1)
     ip = proxy_list[proxy_index]
     return ip
+
 
 def remove_bad_ip(ip_with_port):
     global proxy_list
@@ -32,6 +34,10 @@ def remove_bad_ip(ip_with_port):
     if ip_with_port in proxy_list:
         proxy_list.remove(ip_with_port)
 
+
 def get_speed():
     global proxy_list
-    return 2/float(len(proxy_list))
+    ip_size = len(proxy_list)
+    if ip_size == 0:
+        return 2
+    return 2/float(ip_size)
