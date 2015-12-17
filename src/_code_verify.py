@@ -90,11 +90,11 @@ class GetUrlThread(Thread):
         resp_read = str(resp)
         if len(str(resp_read).strip()) > 0:
             success = str(resp_read).find("parent.retmsg_invcode('1');") < 0
-            print self.index, "<==", url, success, self.code, "   response: " + resp_read
+            print self.index, "<==", self.ip_with_port, success, self.code, "   response: " + resp_read
         else:
             success = False
             self.append_to_bad_ip(self.ip_with_port)
-            print self.index, "<==", url, success, self.code, "   response is EMPTY ", self.ip_with_port
+            print self.index, "<==", self.ip_with_port, success, self.code, "   response is EMPTY ", self.ip_with_port
         if success:
             success_result.append(self.code)
 
