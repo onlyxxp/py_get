@@ -1,5 +1,7 @@
 from src import _code_guess
 from src import _code_verify
+from src import _url_
+from src import _ip_
 
 __author__ = 'xxp'
 
@@ -12,6 +14,6 @@ def main():
     print(len(result_list))
 
     # result_list = ["a6*b8f4c981*577a"]
-    _code_verify.get_responses(result_list)
+    _code_verify.get_responses(result_list, _url_.get_url(), _ip_.get_ip_with_port())
 
 main()

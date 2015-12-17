@@ -7,11 +7,6 @@ proxys = [
 ]
 
 def get_ip_with_port():
-    lenth = len(proxys)
-
-    if lenth <= 0:
-        return ''
-
-    proxy_index = random.randint(0, lenth - 1)
+    proxy_index = random.randint(0, len(proxys) - 1)
     ip = proxys[proxy_index]
     return ip
