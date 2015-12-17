@@ -85,11 +85,11 @@ class GetUrlThread(Thread):
         req = urllib2.Request(url, data=value_encoded, headers=headers)
         return req, url
 
-    def transact_success_result(self, resp, url):
+    def transact_http_result(self, resp, url):
         global success, success_result, bad_ip
         resp_read = str(resp)
         if len(str(resp_read).strip()) > 0:
-            success = str(resp_read).find("parent.retmsg_invcode('1');") < 0
+            success = str(resp_read).find(r"retmsg_invcode('0');") > 0
             print self.index, "<==", self.ip_with_port, success, self.code, "   response: " + resp_read
         else:
             success = False
@@ -106,15 +106,15 @@ class GetUrlThread(Thread):
 
     def run(self):
         self.thread_count_increase()
-        global max_retry_num, http_failed_codes, bad_ip, success_result
+        global max_retry_num, http_failed_codes, bad_ip, success_result, success
         req, url = self.build_request()
         for i in range(max_retry_num):
             try:
                 resp = urllib2.urlopen(req, timeout=5).read()
-                self.transact_success_result(resp, url)
+                self.transact_http_result(resp, url)
                 break
             except:
-                if i < max_retry_num - 1:
+                if not success and (i < max_retry_num - 1):
                     print 'URLError: retry later ...', self.ip_with_port
                     time.sleep(2)
                     continue
