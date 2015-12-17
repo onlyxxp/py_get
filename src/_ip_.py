@@ -22,6 +22,9 @@ def get_ip_with_port():
     ip = proxy_list[proxy_index]
     return ip
 
+def remove_bad_ip(ip):
+    proxy_list.remove(ip)
+
 def get_speed():
     global proxy_list
     return 2/float(len(proxy_list))
