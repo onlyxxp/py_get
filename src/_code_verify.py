@@ -60,7 +60,7 @@ class GetUrlThread(Thread):
             opener = urllib2.build_opener(proxy)
             urllib2.install_opener(opener)
 
-        print self.index, "==>", ip_with_port,  " ", self.url
+        print self.index, "==> ip=", ip_with_port,  "  url=", self.url
         req = urllib2.Request(url, data=value_encoded, headers=headers)
         return req, url
 
