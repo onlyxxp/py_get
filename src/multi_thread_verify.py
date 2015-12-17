@@ -11,7 +11,13 @@ from threading import Thread
 
 user_agents = [
     "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0) ",
+    "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2) ",
+    "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1) ",
+    "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0) ",
     "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2) ",
+    "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1) ",
+    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 6.0)",
+    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2)",
     "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",
     "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 6.0)",
     "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.2)",
@@ -79,11 +85,12 @@ class GetUrlThread(Thread):
         resp_read = str(resp)
         if len(str(resp_read).strip()) > 0:
             success = str(resp_read).find("parent.retmsg_invcode('1');") < 0
+            print url, success, self.code, "   response: " + resp_read
         else:
             success = False
+            print url, success, self.code, "   response is EMPTY "
         if success:
             success_result.append(self.code)
-        print url, success, self.code, "   response: " + resp_read
 
 
 def get_responses(code_list):
