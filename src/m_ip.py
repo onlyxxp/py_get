@@ -39,4 +39,4 @@ def get_speed():
 
 
 def get_ip_size():
-    return max(len(proxy_list), 1)
+    return len(proxy_list)

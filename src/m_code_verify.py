@@ -34,7 +34,7 @@ success = False
 
 mutex = threading.Lock()
 current_thread_count = 0
-max_thread_count = m_ip.get_ip_size()
+max_thread_count = max(m_ip.get_ip_size(), 1)
 
 
 class GetUrlThread(Thread):
@@ -89,7 +89,7 @@ class GetUrlThread(Thread):
         global success, success_result, bad_ip
         resp_read = str(resp)
         if len(str(resp_read).strip()) > 0:
-            success = str(resp_read).find(r"retmsg_invcode('0');") > 0
+            success = str(resp_read).find(r"retmsg_invcode('1');") > 0
             print self.index, "<==", self.ip_with_port, success, self.code, "   response: " + resp_read
         else:
             success = False
