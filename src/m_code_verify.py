@@ -1,6 +1,8 @@
 # !/usr/bin/env python
 import threading
 
+from pip._vendor import requests
+
 __author__ = 'xxp'
 import random
 import urllib
@@ -120,6 +122,8 @@ class GetUrlThread(Thread):
     def verify(self):
         global max_retry_num, http_failed_codes, bad_ip, success_result, success
         req, url = self.build_request()
+        s = requests.session()
+        s.cookies.clear()
         for i in range(max_retry_num):
             if success:
                 print "run is skip because success"
