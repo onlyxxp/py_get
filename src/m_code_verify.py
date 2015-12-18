@@ -6,7 +6,7 @@ import random
 import urllib
 import urllib2
 import time
-from src import _ip_
+from src import m_ip
 from threading import Thread
 
 user_agents = [
@@ -34,7 +34,7 @@ success = False
 
 mutex = threading.Lock()
 current_thread_count = 0
-max_thread_count = _ip_.get_ip_size()
+max_thread_count = m_ip.get_ip_size()
 
 
 class GetUrlThread(Thread):
@@ -81,7 +81,7 @@ class GetUrlThread(Thread):
             opener = urllib2.build_opener(proxy)
             urllib2.install_opener(opener)
 
-        # print self.index, "==> ip=", ip_with_port,  "  url=", self.url
+        print self.index, "==> ip=", ip_with_port,  "  url=", self.url
         req = urllib2.Request(url, data=value_encoded, headers=headers)
         return req, url
 
@@ -100,7 +100,7 @@ class GetUrlThread(Thread):
 
     def append_to_bad_ip(self, ip_with_port):
         global bad_ip
-        _ip_.remove_bad_ip(ip_with_port)
+        m_ip.remove_bad_ip(ip_with_port)
         if ip_with_port not in bad_ip:
             bad_ip.append(ip_with_port)
 
@@ -132,7 +132,10 @@ def get_responses(code_list, url):
 
     index = 1
     for code in list(code_list):
-        t = GetUrlThread(code, index, url, _ip_.get_ip_with_port())
+        ip_with_port = ''
+        if m_ip.get_ip_size() > 0:
+            ip_with_port = m_ip.get_ip_with_port()
+        t = GetUrlThread(code, index, url, ip_with_port)
         threads.append(t)
         t.start()
         index += 1
@@ -140,7 +143,9 @@ def get_responses(code_list, url):
             print 'skip because success'
             break
         while current_thread_count >= max_thread_count:
-            time.sleep(_ip_.get_speed())
+            speed = m_ip.get_speed()
+            print 'sleep ', speed, 'to avoid to much threads, current threads count is ', current_thread_count
+            time.sleep(speed)
 
     for t in threads:
         t.join()

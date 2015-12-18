@@ -1,7 +1,7 @@
-from src import _code_guess
-from src import _code_verify
-from src import _url_
-from src import _ip_
+from src import m_code_guess
+from src import m_code_verify
+from src import m_url
+from src import m_ip
 
 __author__ = 'xxp'
 
@@ -9,11 +9,11 @@ __author__ = 'xxp'
 code = "a6*b8f4c981*577a"
 
 def main():
-    result_list = _code_guess.guess_full_codes(code)
+    result_list = m_code_guess.guess_full_codes(code)
 
     print(len(result_list))
 
     # result_list = ["a6*b8f4c981*577a"]
-    _code_verify.get_responses(result_list, _url_.get_url())
+    m_code_verify.get_responses(result_list, m_url.get_url())
 
 main()
