@@ -94,7 +94,7 @@ class GetUrlThread(Thread):
     def transact_http_result(self, resp, url, start):
         global success, success_result, bad_ip
         resp_read = str(resp)
-        if len(str(resp_read).strip()) > 0:
+        if len(str(resp_read).strip()) > 1:
             success = str(resp_read).find(r"retmsg_invcode('0');") > 0
             print self.index, "<==", self.ip_with_port, success, self.code, " time:", time.time() - start, "   response: " + resp_read
         else:
