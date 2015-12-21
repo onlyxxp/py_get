@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-project_dir = r"D:\codes\TTEntertainment"
+
+import sys
+
+project_dir = r""
 # project_dir = r"D:\codes\TTLiveHouse"
 # project_dir = r"D:\codes\Navigator-Android"
 
@@ -14,6 +17,10 @@ def count_error(result_file_name):
     line_counts = 0
     error_counts = 0
     character_counts = 0
+
+    if not (os.path.exists(result_file_name)):
+        print result_file_name, "not exist"
+        return 0
 
     with open(result_file_name, 'r') as f:
         for line in f:
@@ -31,6 +38,11 @@ def update_error_to_pom(module_dir, error_count):
     """
     pom_file = module_dir + r"\pom.xml"
     _content = ''
+
+    if not (os.path.exists(pom_file)):
+        print pom_file, "not exist"
+        return
+
     with open(pom_file, 'r') as f:
         for line in f:
             if line.find(r"maxAllowedViolations") > 0:
@@ -47,6 +59,9 @@ def checkstyle_result_path(project_path):
     :param project_path: 项目根目录
     """
     error_count = 0
+    if project_path.strip() == '':
+        project_path = sys.path[0]
+
     root_result_file = project_path + r"\target\checkstyle-result.xml"
     error_count += count_error(root_result_file)
     if error_count > 0:
