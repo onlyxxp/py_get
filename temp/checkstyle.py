@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+project_dir = r"D:\codes\Navigator-Android"
 
 def count_error(file_name):
     line_counts = 0
@@ -36,5 +37,5 @@ def checkstyle_result_path(project_path):
 
 # count_error(r"D:\codes\TTEntertainment\Music\target\checkstyle-result.xml")
 
-checkstyle_result_path(r"D:\codes\Navigator-Android")
+checkstyle_result_path(project_dir)
 
